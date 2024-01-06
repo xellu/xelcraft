@@ -1,0 +1,35 @@
+[gd_scene load_steps=7 format=3 uid="uid://emj2oo2b8htx"]
+
+[ext_resource type="Texture2D" uid="uid://qyud7fq84jyb" path="res://crosshair.png" id="1_6pp58"]
+[ext_resource type="Script" path="res://Crosshair.cs" id="2_1vfgi"]
+[ext_resource type="Script" path="res://Hotbar.cs" id="3_nokov"]
+[ext_resource type="Texture2D" uid="uid://deh4gy7yopeo8" path="res://assets/hotbar_selected.png" id="4_71vts"]
+[ext_resource type="Texture2D" uid="uid://xld1lfbaqx0u" path="res://assets/hotbar.png" id="4_qdn53"]
+[ext_resource type="Script" path="res://FpsCounter.cs" id="6_fb1ca"]
+
+[node name="HUD" type="Node2D"]
+
+[node name="Crosshair" type="Node2D" parent="."]
+
+[node name="CrosshairSprite" type="Sprite2D" parent="Crosshair"]
+position = Vector2(0, 1.19209e-07)
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("1_6pp58")
+script = ExtResource("2_1vfgi")
+
+[node name="Hotbar" type="Node2D" parent="."]
+scale = Vector2(2, 2)
+script = ExtResource("3_nokov")
+
+[node name="Hotbar" type="Sprite2D" parent="Hotbar"]
+position = Vector2(0.5, -0.5)
+texture = ExtResource("4_qdn53")
+
+[node name="Active" type="Sprite2D" parent="Hotbar"]
+texture = ExtResource("4_71vts")
+
+[node name="FpsCounter" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "FPS: 0"
+script = ExtResource("6_fb1ca")
