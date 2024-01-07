@@ -3,7 +3,6 @@ using System;
 
 public partial class Menu : Control
 {
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 	}
@@ -14,8 +13,24 @@ public partial class Menu : Control
 	}
 
     //handle button press
-    private void _on_Button_pressed()
-    {
-        GD.Print("Button pressed");    
+
+    //loads a game when pressed
+    public void LoadBtnPressed() {
+        GD.Print("InterfaceMenu: Load button pressed");
+    }
+
+    //connect to a multiplayer server
+    public void ConnectBtnPressed() {
+        GD.Print("InterfaceMenu: Connect button pressed");
+    }
+
+    //open settings menu
+    public void SettingsBtnPressed() {
+        GD.Print("InterfaceMenu: Settings button pressed");
+    }
+
+    //exit the game
+    public void ExitBtnPressed() { 
+        GD.Print("InterfaceMenu: Exit button pressed");
     }
 }
