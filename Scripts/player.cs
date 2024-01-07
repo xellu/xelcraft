@@ -162,7 +162,7 @@ public partial class player : CharacterBody3D
 
 		//reset
 		if (@event.IsActionPressed("ui_filedialog_refresh")) {
-			this.Position = new Vector3(0, 10, 0);
+			this.Position = new Vector3(0, 100, 0);
 			yaw = 0f;
 			pitch = 0f;
 		}
