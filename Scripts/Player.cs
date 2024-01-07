@@ -50,7 +50,7 @@ public partial class Player : CharacterBody3D
 				Mathf.FloorToInt(blockPosition.Z));
 
 			BlockHighlight.GlobalPosition = intBlockPosition + new Vector3(0.5f, 0.5f, 0.5f);
-            BlockHighlight.Rotation =  -this.Rotation;
+			BlockHighlight.Rotation =  -this.Rotation;
 
 			if (Input.IsActionJustPressed("interact"))
 			{

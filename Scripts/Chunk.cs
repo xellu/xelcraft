@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 
 [Tool]
@@ -37,22 +38,28 @@ public partial class Chunk : StaticBody3D
 
 	[Export] public FastNoiseLite Noise { get; set; }
 
+
+	
 	public void SetChunkPosition(Vector2I position)
 	{
+		var oldBlock = _blocks;
+		var oldPos = ChunkPosition;
+		
 		ChunkManager.Instance.UpdateChunkPosition(this, position, ChunkPosition);
 		ChunkPosition = position;
 		CallDeferred(Node3D.MethodName.SetGlobalPosition,
 			new Vector3(ChunkPosition.X * dimensions.X, 0, ChunkPosition.Y * dimensions.Z));
-		if (ChunkManager.Instance._oldChunk.TryGetValue(position, out var blocky))
+		if (ChunkManager.Instance._oldChunk.TryGetValue(position, out var bloky))
 		{
-			GD.Print("Snazim se loadnout uz saved chunk.");
-			_blocks = blocky;
+			_blocks = bloky;
 		}
 		else
 		{
 			Generate();
 		}
 
+		ChunkManager.Instance._oldChunk[oldPos] = oldBlock;
+		
 		Update();
 	}
 
@@ -72,7 +79,7 @@ public partial class Chunk : StaticBody3D
 					var groundHeight = (int)(dimensions.Y *
 											 ((Noise.GetNoise2D(globalBlockPosition.X, globalBlockPosition.Y) + 1f) /
 											  2f));
-
+					
 					if (y < groundHeight / 2)
 					{
 						block = BlockManager.Instance.Stone;
@@ -123,7 +130,8 @@ public partial class Chunk : StaticBody3D
 		var block = _blocks[blockPosition.X, blockPosition.Y, blockPosition.Z];
 
 		if (block == BlockManager.Instance.Air) return;
-
+		if(block == null) return;
+		
 		if (CheckTransparent(blockPosition + Vector3I.Up))
 		{
 			CreateFaceMesh(_top, blockPosition, block.TopTexture ?? block.Texture);

@@ -59,7 +59,6 @@ public partial class ChunkManager : Node
 	{
 		if (_positionToChunk.TryGetValue(previousPosition, out var chunkAtPosition) && chunkAtPosition == chunk)
 		{
-			_oldChunk[previousPosition] = chunkAtPosition.GetBlocks();
 			_positionToChunk.Remove(previousPosition);
 		}
 
@@ -111,6 +110,7 @@ public partial class ChunkManager : Node
 						if (_positionToChunk.ContainsKey(chunkPosition))
 						{
 							_positionToChunk.Remove(chunkPosition);
+
 							GD.Print($"Unloading chunk at {newChunkX} {newChunkZ}");
 						}
 
