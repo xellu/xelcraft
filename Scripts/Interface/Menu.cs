@@ -13,9 +13,9 @@ public partial class Menu : Control
 	{
 	}
 
-    //handle button press
-    private void _on_Button_pressed()
-    {
-        GD.Print("Button pressed");    
-    }
+	//handle button press
+	private void _on_Button_pressed()
+	{
+		GD.Print("Button pressed");    
+	}
 }
