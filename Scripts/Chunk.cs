@@ -43,25 +43,21 @@ public partial class Chunk : StaticBody3D
 
 	public void SetChunkPosition(Vector2I position)
 	{
-		var oldPos = ChunkPosition;
+		//var oldPos = ChunkPosition;
+		_blocks = new Block[dimensions.X, dimensions.Y, dimensions.Z];
 		
 		ChunkManager.Instance.UpdateChunkPosition(this, position, ChunkPosition);
 		ChunkPosition = position;  
 		CallDeferred(Node3D.MethodName.SetGlobalPosition,
 			new Vector3(ChunkPosition.X * dimensions.X, 0, ChunkPosition.Y * dimensions.Z));
-		if (ChunkManager.Instance._oldChunk.TryGetValue(position, out var bloky))
-		{
-			_blocks = bloky;
-            GD.Print($"Loaded chunk at X: {ChunkPosition.X} Z: {ChunkPosition.Y}");
-		}
+		//oldBlock = _blocks;
+		//ChunkManager.Instance._oldChunk[oldPos] = oldBlock;
+		if (ChunkManager.Instance._oldChunk.TryGetValue(position, out var value))
+			_blocks = value;
 		else
 		{
 			Generate();
 		}
-
-        oldBlock = _blocks;
-		ChunkManager.Instance._oldChunk[oldPos] = oldBlock;
-		
 		Update();
 	}
 
@@ -103,8 +99,11 @@ public partial class Chunk : StaticBody3D
 				}
 			}
 		}
-        
-        GD.Print($"Generated chunk at X: {ChunkPosition.X} Z: {ChunkPosition.Y}");
+
+		ChunkManager.Instance._oldChunk.Remove(ChunkPosition);
+		ChunkManager.Instance._oldChunk[ChunkPosition] = _blocks;
+
+		GD.Print($"Generated chunk at X: {ChunkPosition.X} Z: {ChunkPosition.Y}");
 	}
 
 	public void Update()
@@ -218,5 +217,11 @@ public partial class Chunk : StaticBody3D
 	public Block[,,] GetBlocks()
 	{
 		return _blocks;
+	}
+
+	public void SetBlocks(Block[,,] oldChunk)
+	{
+		_blocks = oldChunk;
+		Update();
 	}
 }

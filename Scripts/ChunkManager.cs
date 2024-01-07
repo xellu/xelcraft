@@ -98,10 +98,10 @@ public partial class ChunkManager : Node
 				var chunkX = chunkPosition.X;
 				var chunkZ = chunkPosition.Y;
 
-				var newChunkX = (int)(Mathf.PosMod(chunkX - playerChunkX + _width / 2, _width) + playerChunkX -
-									  _width / 2);
-				var newChunkZ = (int)(Mathf.PosMod(chunkZ - playerChunkZ + _width / 2, _width) + playerChunkZ -
-									  _width / 2);                
+				var newChunkX = (int)(Mathf.PosMod(chunkX - playerChunkX + _width / 2f, _width) + playerChunkX -
+									  _width / 2f);
+				var newChunkZ = (int)(Mathf.PosMod(chunkZ - playerChunkZ + _width / 2f, _width) + playerChunkZ -
+									  _width / 2f);
 
 				if (newChunkX != chunkX || newChunkZ != chunkZ)
 				{
@@ -111,7 +111,7 @@ public partial class ChunkManager : Node
 						{
 							_positionToChunk.Remove(chunkPosition);
 
-							GD.Print($"Unloading chunk at X: {chunkX} Z: {chunkZ}");
+							GD.Print($"Unloading chunk at {newChunkX} {newChunkZ}");
 						}
 
 						var newPosition = new Vector2I(newChunkX, newChunkZ);

@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dv2vqt004w2hp" path="res://Textures/Blocks/dirt.png" id="4_bryex"]
 [ext_resource type="Texture2D" uid="uid://ugc6vog0nijk" path="res://Textures/Blocks/grass_block_top.png" id="5_rg6ko"]
 [ext_resource type="Texture2D" uid="uid://2pmsd7o3eq37" path="res://Textures/Blocks/grass_block_side.png" id="5_ttjmu"]
-[ext_resource type="PackedScene" uid="uid://c4h6o80nyguwj" path="res://Scenes/Player.tscn" id="8_k8ght"]
+[ext_resource type="PackedScene" uid="uid://c4h6o80nyguwj" path="res://Scenes/player.tscn" id="8_k8ght"]
 
 [sub_resource type="Resource" id="Resource_swmm1"]
 script = ExtResource("2_nvw7f")
