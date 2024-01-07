@@ -52,6 +52,7 @@ public partial class Chunk : StaticBody3D
 		if (ChunkManager.Instance._oldChunk.TryGetValue(position, out var bloky))
 		{
 			_blocks = bloky;
+            GD.Print($"Loaded chunk at {ChunkPosition.ToString()}");
 		}
 		else
 		{
@@ -101,6 +102,8 @@ public partial class Chunk : StaticBody3D
 				}
 			}
 		}
+        
+        GD.Print($"Generated chunk at {ChunkPosition.ToString()}");
 	}
 
 	public void Update()

@@ -35,7 +35,7 @@ mesh = SubResource("CapsuleMesh_ipwkm")
 [node name="PitchPivot" type="Node3D" parent="TwistPivot"]
 
 [node name="Camera3D" type="Camera3D" parent="TwistPivot/PitchPivot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.557605, -0.303139)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 44.7093, -0.303139)
 current = true
 fov = 117.9
 script = ExtResource("2_f0brm")
