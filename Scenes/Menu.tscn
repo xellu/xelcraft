@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://dpsweqmmyhd1s"]
+[gd_scene load_steps=7 format=3 uid="uid://dpsweqmmyhd1s"]
 
+[ext_resource type="Script" path="res://Scripts/Interface/Menu.cs" id="1_x0vtd"]
 [ext_resource type="Texture2D" uid="uid://cv3fdpckkh5y3" path="res://Textures/Interface/plus.png" id="2_4hoe0"]
 [ext_resource type="Texture2D" uid="uid://cblwctk857gna" path="res://Textures/Interface/icon_256x.png" id="2_85e3f"]
 [ext_resource type="Texture2D" uid="uid://3epi4ibqhk1s" path="res://Textures/Interface/arrow_right_slanted.png" id="3_kkows"]
@@ -28,6 +29,7 @@ offset_right = 10.208
 offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_x0vtd")
 
 [node name="Icon" type="TextureRect" parent="Interface"]
 layout_mode = 1
@@ -86,4 +88,5 @@ offset_bottom = 181.0
 text = "Exit
 "
 icon = ExtResource("5_p36iu")
+flat = true
 expand_icon = true

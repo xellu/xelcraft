@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://c4h6o80nyguwj"]
 
-[ext_resource type="Script" path="res://Scripts/player.cs" id="1_h36ky"]
+[ext_resource type="Script" path="res://Scripts/Player.cs" id="1_h36ky"]
 [ext_resource type="Script" path="res://Camera.cs" id="2_f0brm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yhqfi"]
