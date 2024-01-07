@@ -72,7 +72,7 @@ public partial class BlockManager : Node
 
 		TextureAtlasSize = new Vector2(_gridWidth, _gridHeight);
 		
-		GD.Print("Works! nigga");
+		GD.Print("Works!"); //adame nebud rasista
 	}
 
 	public Vector2I GetTextureAtlasPosition(Texture2D texture)
