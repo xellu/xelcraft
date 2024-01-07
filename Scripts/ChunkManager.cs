@@ -19,7 +19,7 @@ public partial class ChunkManager : Node
 
 	[Export] public PackedScene ChunkScene;
 
-	private int _width = 5;
+	private int _width = 10;
 
 	private Vector3 _playerPosition;
 	private object _playerPositionLock = new();
@@ -101,7 +101,7 @@ public partial class ChunkManager : Node
 				var newChunkX = (int)(Mathf.PosMod(chunkX - playerChunkX + _width / 2, _width) + playerChunkX -
 									  _width / 2);
 				var newChunkZ = (int)(Mathf.PosMod(chunkZ - playerChunkZ + _width / 2, _width) + playerChunkZ -
-									  _width / 2);
+									  _width / 2);                
 
 				if (newChunkX != chunkX || newChunkZ != chunkZ)
 				{
@@ -111,7 +111,7 @@ public partial class ChunkManager : Node
 						{
 							_positionToChunk.Remove(chunkPosition);
 
-							GD.Print($"Unloading chunk at {newChunkX} {newChunkZ}");
+							GD.Print($"Unloading chunk at X: {chunkX} Z: {chunkZ}");
 						}
 
 						var newPosition = new Vector2I(newChunkX, newChunkZ);
