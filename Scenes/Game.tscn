@@ -68,4 +68,4 @@ transform = Transform3D(1, 0, 0, 0, -0.200822, 0.979628, 0, -0.979628, -0.200822
 shadow_enabled = true
 
 [node name="Player" parent="." instance=ExtResource("8_k8ght")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 48.2152, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
