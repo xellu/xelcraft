@@ -1,12 +1,14 @@
-[gd_scene load_steps=12 format=3 uid="uid://46fhtqeknqr2"]
+[gd_scene load_steps=17 format=3 uid="uid://46fhtqeknqr2"]
 
 [ext_resource type="Script" path="res://Scripts/BlockManager.cs" id="1_cy3ni"]
+[ext_resource type="Script" path="res://Scripts/ChunkManager.cs" id="1_hnrhe"]
 [ext_resource type="PackedScene" uid="uid://0sb7i7mt0mhg" path="res://Scenes/Chunk.tscn" id="2_43sdr"]
 [ext_resource type="Script" path="res://Scripts/Block.cs" id="2_nvw7f"]
 [ext_resource type="Texture2D" uid="uid://mhevrplxx67m" path="res://Textures/Blocks/cobblestone.png" id="3_1datj"]
 [ext_resource type="Texture2D" uid="uid://dv2vqt004w2hp" path="res://Textures/Blocks/dirt.png" id="4_bryex"]
 [ext_resource type="Texture2D" uid="uid://ugc6vog0nijk" path="res://Textures/Blocks/grass_block_top.png" id="5_rg6ko"]
 [ext_resource type="Texture2D" uid="uid://2pmsd7o3eq37" path="res://Textures/Blocks/grass_block_side.png" id="5_ttjmu"]
+[ext_resource type="PackedScene" uid="uid://c4h6o80nyguwj" path="res://Scenes/player.tscn" id="8_k8ght"]
 
 [sub_resource type="Resource" id="Resource_swmm1"]
 script = ExtResource("2_nvw7f")
@@ -25,7 +27,20 @@ Texture = ExtResource("5_ttjmu")
 TopTexture = ExtResource("5_rg6ko")
 BottomTexture = ExtResource("4_bryex")
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_x80jx"]
+
+[sub_resource type="Sky" id="Sky_pgsfw"]
+sky_material = SubResource("ProceduralSkyMaterial_x80jx")
+
+[sub_resource type="Environment" id="Environment_6spgl"]
+background_mode = 2
+sky = SubResource("Sky_pgsfw")
+fog_light_color = Color(0.286275, 0.705882, 1, 1)
+
 [node name="Level" type="Node3D"]
+
+[node name="ChunkManager" type="Node" parent="."]
+script = ExtResource("1_hnrhe")
 
 [node name="BlockManager" type="Node" parent="."]
 script = ExtResource("1_cy3ni")
@@ -35,28 +50,22 @@ Dirt = SubResource("Resource_0wqxf")
 Grass = SubResource("Resource_ekowv")
 
 [node name="Chunk" parent="." instance=ExtResource("2_43sdr")]
-CollisionShape = Object(CollisionShape3D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","transform":Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),"rotation_edit_mode":0,"rotation_order":2,"top_level":false,"visible":true,"visibility_parent":NodePath(""),"shape":null,"disabled":false,"script":null)
-
-MeshInstance = Object(MeshInstance3D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","transform":Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),"rotation_edit_mode":0,"rotation_order":2,"top_level":false,"visible":true,"visibility_parent":NodePath(""),"layers":1,"sorting_offset":0.0,"sorting_use_aabb_center":true,"material_override":null,"material_overlay":null,"transparency":0.0,"cast_shadow":1,"extra_cull_margin":0.0,"custom_aabb":AABB(0, 0, 0, 0, 0, 0),"lod_bias":1.0,"ignore_occlusion_culling":false,"gi_mode":1,"gi_lightmap_scale":0,"visibility_range_begin":0.0,"visibility_range_begin_margin":0.0,"visibility_range_end":0.0,"visibility_range_end_margin":0.0,"visibility_range_fade_mode":0,"mesh":null,"skin":null,"skeleton":NodePath(".."),"surface_material_override/0":null,"script":null)
-
 
 [node name="Chunk2" parent="." instance=ExtResource("2_43sdr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0)
-CollisionShape = Object(CollisionShape3D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","transform":Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),"rotation_edit_mode":0,"rotation_order":2,"top_level":false,"visible":true,"visibility_parent":NodePath(""),"shape":null,"disabled":false,"script":null)
-
-MeshInstance = Object(MeshInstance3D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","transform":Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),"rotation_edit_mode":0,"rotation_order":2,"top_level":false,"visible":true,"visibility_parent":NodePath(""),"layers":1,"sorting_offset":0.0,"sorting_use_aabb_center":true,"material_override":null,"material_overlay":null,"transparency":0.0,"cast_shadow":1,"extra_cull_margin":0.0,"custom_aabb":AABB(0, 0, 0, 0, 0, 0),"lod_bias":1.0,"ignore_occlusion_culling":false,"gi_mode":1,"gi_lightmap_scale":0,"visibility_range_begin":0.0,"visibility_range_begin_margin":0.0,"visibility_range_end":0.0,"visibility_range_end_margin":0.0,"visibility_range_fade_mode":0,"mesh":null,"skin":null,"skeleton":NodePath(".."),"surface_material_override/0":null,"script":null)
-
 
 [node name="Chunk3" parent="." instance=ExtResource("2_43sdr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16)
-CollisionShape = Object(CollisionShape3D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","transform":Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),"rotation_edit_mode":0,"rotation_order":2,"top_level":false,"visible":true,"visibility_parent":NodePath(""),"shape":null,"disabled":false,"script":null)
-
-MeshInstance = Object(MeshInstance3D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","transform":Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),"rotation_edit_mode":0,"rotation_order":2,"top_level":false,"visible":true,"visibility_parent":NodePath(""),"layers":1,"sorting_offset":0.0,"sorting_use_aabb_center":true,"material_override":null,"material_overlay":null,"transparency":0.0,"cast_shadow":1,"extra_cull_margin":0.0,"custom_aabb":AABB(0, 0, 0, 0, 0, 0),"lod_bias":1.0,"ignore_occlusion_culling":false,"gi_mode":1,"gi_lightmap_scale":0,"visibility_range_begin":0.0,"visibility_range_begin_margin":0.0,"visibility_range_end":0.0,"visibility_range_end_margin":0.0,"visibility_range_fade_mode":0,"mesh":null,"skin":null,"skeleton":NodePath(".."),"surface_material_override/0":null,"script":null)
-
 
 [node name="Chunk4" parent="." instance=ExtResource("2_43sdr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -16)
-CollisionShape = Object(CollisionShape3D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","transform":Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),"rotation_edit_mode":0,"rotation_order":2,"top_level":false,"visible":true,"visibility_parent":NodePath(""),"shape":null,"disabled":false,"script":null)
 
-MeshInstance = Object(MeshInstance3D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","transform":Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),"rotation_edit_mode":0,"rotation_order":2,"top_level":false,"visible":true,"visibility_parent":NodePath(""),"layers":1,"sorting_offset":0.0,"sorting_use_aabb_center":true,"material_override":null,"material_overlay":null,"transparency":0.0,"cast_shadow":1,"extra_cull_margin":0.0,"custom_aabb":AABB(0, 0, 0, 0, 0, 0),"lod_bias":1.0,"ignore_occlusion_culling":false,"gi_mode":1,"gi_lightmap_scale":0,"visibility_range_begin":0.0,"visibility_range_begin_margin":0.0,"visibility_range_end":0.0,"visibility_range_end_margin":0.0,"visibility_range_fade_mode":0,"mesh":null,"skin":null,"skeleton":NodePath(".."),"surface_material_override/0":null,"script":null)
+[node name="Player" parent="." instance=ExtResource("8_k8ght")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8393, 36.1483, -0.390716)
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_6spgl")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.200822, 0.979628, 0, -0.979628, -0.200822, 0, 0, 0)
+shadow_enabled = true
