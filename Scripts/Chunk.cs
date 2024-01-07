@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-[Tool]
 public partial class Chunk : StaticBody3D
 {
 	[Export] public CollisionShape3D CollisionShape { get; set; }

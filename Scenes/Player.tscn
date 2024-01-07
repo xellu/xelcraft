@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://c4h6o80nyguwj"]
+[gd_scene load_steps=6 format=3 uid="uid://c4h6o80nyguwj"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_h36ky"]
-[ext_resource type="Script" path="res://Camera.cs" id="2_f0brm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yhqfi"]
 transparency = 1
@@ -15,9 +14,10 @@ size = Vector3(1.05, 1.05, 1.05)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ipwkm"]
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("RayCast", "BlockHighlight")]
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("_camera", "RayCast", "BlockHighlight")]
 script = ExtResource("1_h36ky")
-RayCast = NodePath("TwistPivot/PitchPivot/Camera3D/RayCast3D")
+_camera = NodePath("Camera3D")
+RayCast = NodePath("Camera3D/RayCast3D")
 BlockHighlight = NodePath("BlockHighlight")
 
 [node name="BlockHighlight" type="MeshInstance3D" parent="."]
@@ -30,15 +30,10 @@ shape = SubResource("CapsuleShape3D_uh1h3")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
 mesh = SubResource("CapsuleMesh_ipwkm")
 
-[node name="TwistPivot" type="Node3D" parent="."]
-
-[node name="PitchPivot" type="Node3D" parent="TwistPivot"]
-
-[node name="Camera3D" type="Camera3D" parent="TwistPivot/PitchPivot"]
+[node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.557605, -0.303139)
 current = true
 fov = 117.9
-script = ExtResource("2_f0brm")
 
-[node name="RayCast3D" type="RayCast3D" parent="TwistPivot/PitchPivot/Camera3D"]
+[node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
 target_position = Vector3(0, 0, -5)

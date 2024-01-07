@@ -5,24 +5,26 @@ using System.Runtime.CompilerServices;
 public partial class Player : CharacterBody3D
 {
 	// player rotation
-	public const float sensitivity = 4f;
-	public static float yaw = 0f;
-	public static float pitch = 0f;
+	
+	[Export]
+	public float Speed = 5f;
+	[Export]
+	public float SprintFactor = 1.5f;
+	[Export]
+	public float MouseSensitivity = 20f;
+
+	[Export] public Camera3D _camera;
 	
 	// player movement
-	public const float Speed = 5.0f;
-	public const float SprintFactor = 1.5f;
 	public const float JumpVelocity = 4.5f;
-	public static float X = 0f;
-	public static float Y = 0f;
-	public static float Z = 0f;
-	public static bool teleport = false;
 
 	public static Player Instance { get; private set; }
 	
 	[Export] public RayCast3D RayCast;
 
 	[Export] public MeshInstance3D BlockHighlight;
+
+	private Vector3 _direction = new Vector3();
 	
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -36,10 +38,6 @@ public partial class Player : CharacterBody3D
 
 	public override void _Process(double delta)
 	{
-		if (teleport) {
-			this.Position = new Vector3(X, Y, Z);
-			teleport = false;
-		}
 
 		if (RayCast.IsColliding() && RayCast.GetCollider() is Chunk chunk)
 		{
@@ -67,20 +65,13 @@ public partial class Player : CharacterBody3D
 		{
 			BlockHighlight.Visible = false;
 		}
-		
-		
-		X = this.Position.X;
-		Y = this.Position.Y;
-		Z = this.Position.Z;
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		//tp to spawn
 		if (this.Position.Y < -10) {
-			this.Position = new Vector3(0, 10, 0);
-			yaw = 0f;
-			pitch = 0f;
+			this.Position = new Vector3(0, 100, 0);
 		}
 
 		// exit to menu
@@ -112,12 +103,12 @@ public partial class Player : CharacterBody3D
 		// Get the input direction and handle the movement/deceleration.
 		// As good practice, you should replace UI actions with custom gameplay actions.
 		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
-		Vector3 direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
-
-		if (direction != Vector3.Zero)
+		_direction = _direction.Lerp((Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized(), 0.5f);
+		
+		if (_direction != Vector3.Zero)
 		{
-			velocity.X = direction.X * Speed;
-			velocity.Z = direction.Z * Speed;
+			velocity.X = _direction.X * Speed;
+			velocity.Z = _direction.Z * Speed;
 		}
 		else
 		{
@@ -145,29 +136,26 @@ public partial class Player : CharacterBody3D
 		MoveAndSlide();
 	}
 	
-	public override void _UnhandledInput(InputEvent @event)
+	public override void _Input(InputEvent @event)
 	{
 		//exit if on menu 
 		if (Input.MouseMode != Input.MouseModeEnum.Captured) {return;}
 
 		// process rotation
-		if (@event is InputEventMouseMotion mouseEvent)
+		if (@event is InputEventMouseMotion && Input.MouseMode == Input.MouseModeEnum.Captured)
 		{
-			yaw -= mouseEvent.Relative.X * (sensitivity/1000);
-			pitch -= mouseEvent.Relative.Y * (sensitivity/1000);
-			
-			if (pitch > 1.5f) {pitch = 1.5f;}
-			if (pitch < -1.5f) {pitch = -1.5f;}
+			InputEventMouseMotion mouseEvent = @event as InputEventMouseMotion;
+			_camera.RotateX(Mathf.DegToRad(-mouseEvent.Relative.Y * (MouseSensitivity / 100f)));
+			RotateY(Mathf.DegToRad(-mouseEvent.Relative.X * (MouseSensitivity / 100f)));
 
-			Vector3 PlayerRotation = new Vector3(0, yaw, 0);
-			this.Rotation = PlayerRotation;            
+			Vector3 cameraRot = _camera.RotationDegrees;
+			cameraRot.X = Mathf.Clamp(cameraRot.X, -89, 89);
+			_camera.RotationDegrees = cameraRot;
 		}
 
 		//reset
 		if (@event.IsActionPressed("ui_filedialog_refresh")) {
 			this.Position = new Vector3(0, 100, 0);
-			yaw = 0f;
-			pitch = 0f;
 		}
 	}
 }

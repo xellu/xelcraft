@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://x45vtu2prrax"]
+
+[ext_resource type="Script" path="res://Scripts/DebugHUD.cs" id="1_07twj"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_kp4pp"]
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[node name="DebugHUD" type="Control" node_paths=PackedStringArray("FPSLabel", "IsInAirLabel")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_07twj")
+FPSLabel = NodePath("FPSLabel")
+IsInAirLabel = NodePath("InAirLabel")
+
+[node name="FPSLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 10.0
+offset_right = 53.0
+offset_bottom = 33.0
+text = "FPS:"
+label_settings = SubResource("LabelSettings_kp4pp")
+
+[node name="InAirLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 33.0
+offset_right = 53.0
+offset_bottom = 56.0
+text = "Is In Air:"
+label_settings = SubResource("LabelSettings_kp4pp")

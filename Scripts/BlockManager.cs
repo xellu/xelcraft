@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using Godot.Collections;
 
-[Tool]
 public partial class BlockManager : Node
 {
 	[Export]

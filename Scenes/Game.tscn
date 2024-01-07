@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://46fhtqeknqr2"]
+[gd_scene load_steps=18 format=3 uid="uid://46fhtqeknqr2"]
 
 [ext_resource type="Script" path="res://Scripts/BlockManager.cs" id="1_cy3ni"]
 [ext_resource type="Script" path="res://Scripts/ChunkManager.cs" id="1_hnrhe"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://ugc6vog0nijk" path="res://Textures/Blocks/grass_block_top.png" id="5_rg6ko"]
 [ext_resource type="Texture2D" uid="uid://2pmsd7o3eq37" path="res://Textures/Blocks/grass_block_side.png" id="5_ttjmu"]
 [ext_resource type="PackedScene" uid="uid://c4h6o80nyguwj" path="res://Scenes/player.tscn" id="8_k8ght"]
+[ext_resource type="PackedScene" uid="uid://x45vtu2prrax" path="res://Scenes/DebugHUD.tscn" id="10_12g78"]
 
 [sub_resource type="Resource" id="Resource_swmm1"]
 script = ExtResource("2_nvw7f")
@@ -35,9 +36,18 @@ sky_material = SubResource("ProceduralSkyMaterial_x80jx")
 [sub_resource type="Environment" id="Environment_6spgl"]
 background_mode = 2
 sky = SubResource("Sky_pgsfw")
+glow_enabled = true
+fog_enabled = true
 fog_light_color = Color(0.286275, 0.705882, 1, 1)
+fog_light_energy = 0.33
+fog_density = 0.0005
+volumetric_fog_enabled = true
 
 [node name="Level" type="Node3D"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="DebugHUD" parent="CanvasLayer" instance=ExtResource("10_12g78")]
 
 [node name="BlockManager" type="Node" parent="."]
 script = ExtResource("1_cy3ni")
