@@ -46,7 +46,7 @@ public partial class Chunk : StaticBody3D
 		var oldPos = ChunkPosition;
 		
 		ChunkManager.Instance.UpdateChunkPosition(this, position, ChunkPosition);
-		ChunkPosition = position;
+		ChunkPosition = position;  
 		CallDeferred(Node3D.MethodName.SetGlobalPosition,
 			new Vector3(ChunkPosition.X * dimensions.X, 0, ChunkPosition.Y * dimensions.Z));
 		if (ChunkManager.Instance._oldChunk.TryGetValue(position, out var bloky))
