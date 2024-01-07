@@ -17,6 +17,9 @@ public partial class Menu : Control
     //loads a game when pressed
     public void LoadBtnPressed() {
         GD.Print("InterfaceMenu: Load button pressed");
+        
+        //change scene to Scenes/Game.tscn
+        GetTree().ChangeSceneToFile("res://Scenes/Game.tscn");
     }
 
     //connect to a multiplayer server
@@ -32,5 +35,7 @@ public partial class Menu : Control
     //exit the game
     public void ExitBtnPressed() { 
         GD.Print("InterfaceMenu: Exit button pressed");
+        //maybe do some saving before quitting
+        GetTree().Quit();
     }
 }

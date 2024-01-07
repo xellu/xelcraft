@@ -11,7 +11,7 @@ public partial class Camera : Camera3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		Vector3 rot = new Vector3(player.pitch, 0, 0);
+		Vector3 rot = new Vector3(Player.pitch, 0, 0);
 		this.Rotation = rot;
 	}
 }

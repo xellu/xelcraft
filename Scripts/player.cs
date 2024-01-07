@@ -1,8 +1,7 @@
 using Godot;
 using System;
-using System.Runtime.CompilerServices;
 
-public partial class player : CharacterBody3D
+public partial class Player : CharacterBody3D
 {
 	// player rotation
 	public const float sensitivity = 4f;

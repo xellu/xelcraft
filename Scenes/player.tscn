@@ -15,10 +15,8 @@ size = Vector3(1.05, 1.05, 1.05)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ipwkm"]
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("RayCast", "BlockHighlight")]
+[node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_h36ky")
-RayCast = NodePath("TwistPivot/PitchPivot/Camera3D/RayCast3D")
-BlockHighlight = NodePath("BlockHighlight")
 
 [node name="BlockHighlight" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_s7wvo")
