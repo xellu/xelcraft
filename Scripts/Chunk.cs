@@ -43,7 +43,16 @@ public partial class Chunk : StaticBody3D
 		ChunkPosition = position;
 		CallDeferred(Node3D.MethodName.SetGlobalPosition,
 			new Vector3(ChunkPosition.X * dimensions.X, 0, ChunkPosition.Y * dimensions.Z));
-		Generate();
+		if (ChunkManager.Instance._oldChunk.TryGetValue(position, out var blocky))
+		{
+			GD.Print("Snazim se loadnout uz saved chunk.");
+			_blocks = blocky;
+		}
+		else
+		{
+			Generate();
+		}
+
 		Update();
 	}
 
@@ -193,4 +202,9 @@ public partial class Chunk : StaticBody3D
 		Update();
 	}
 
+
+	public Block[,,] GetBlocks()
+	{
+		return _blocks;
+	}
 }

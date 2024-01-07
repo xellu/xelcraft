@@ -11,6 +11,9 @@ public partial class ChunkManager : Node
 
 	private Dictionary<Chunk, Vector2I> _chunkToPosition = new();
 	private Dictionary<Vector2I, Chunk> _positionToChunk = new();
+	
+	public Dictionary<Vector2I, Block[,,]> _oldChunk = new();
+
 
 	private List<Chunk> _chunks;
 
@@ -56,6 +59,7 @@ public partial class ChunkManager : Node
 	{
 		if (_positionToChunk.TryGetValue(previousPosition, out var chunkAtPosition) && chunkAtPosition == chunk)
 		{
+			_oldChunk[previousPosition] = chunkAtPosition.GetBlocks();
 			_positionToChunk.Remove(previousPosition);
 		}
 
@@ -107,6 +111,7 @@ public partial class ChunkManager : Node
 						if (_positionToChunk.ContainsKey(chunkPosition))
 						{
 							_positionToChunk.Remove(chunkPosition);
+							GD.Print($"Unloading chunk at {newChunkX} {newChunkZ}");
 						}
 
 						var newPosition = new Vector2I(newChunkX, newChunkZ);
