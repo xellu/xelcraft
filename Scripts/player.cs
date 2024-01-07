@@ -18,8 +18,9 @@ public partial class Player : CharacterBody3D
 	public static float Z = 0f;
 	public static bool teleport = false;
 
-	[Export]
-	public RayCast3D RayCast;
+	public static Player Instance { get; private set; }
+	
+	[Export] public RayCast3D RayCast;
 
 	[Export] public MeshInstance3D BlockHighlight;
 	
@@ -29,6 +30,7 @@ public partial class Player : CharacterBody3D
 
 	public override void _Ready()
 	{
+		Instance = this;
 		Input.MouseMode = Input.MouseModeEnum.Captured; 
 	}
 

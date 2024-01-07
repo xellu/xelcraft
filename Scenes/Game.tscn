@@ -39,9 +39,6 @@ fog_light_color = Color(0.286275, 0.705882, 1, 1)
 
 [node name="Level" type="Node3D"]
 
-[node name="ChunkManager" type="Node" parent="."]
-script = ExtResource("1_hnrhe")
-
 [node name="BlockManager" type="Node" parent="."]
 script = ExtResource("1_cy3ni")
 Air = SubResource("Resource_swmm1")
@@ -49,16 +46,10 @@ Stone = SubResource("Resource_2gc86")
 Dirt = SubResource("Resource_0wqxf")
 Grass = SubResource("Resource_ekowv")
 
-[node name="Chunk" parent="." instance=ExtResource("2_43sdr")]
+[node name="ChunkManager" type="Node" parent="."]
+script = ExtResource("1_hnrhe")
+ChunkScene = ExtResource("2_43sdr")
 
-[node name="Chunk2" parent="." instance=ExtResource("2_43sdr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0)
-
-[node name="Chunk3" parent="." instance=ExtResource("2_43sdr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16)
-
-[node name="Chunk4" parent="." instance=ExtResource("2_43sdr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -16)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_6spgl")

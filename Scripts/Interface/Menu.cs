@@ -12,6 +12,7 @@ public partial class Menu : Control
 	{
 	}
 
+
     //handle button press
 
     //loads a game when pressed
