@@ -39,10 +39,10 @@ public partial class Chunk : StaticBody3D
 	[Export] public FastNoiseLite Noise { get; set; }
 
 
-	
+	private Block[,,] oldBlock;
+
 	public void SetChunkPosition(Vector2I position)
 	{
-		var oldBlock = _blocks;
 		var oldPos = ChunkPosition;
 		
 		ChunkManager.Instance.UpdateChunkPosition(this, position, ChunkPosition);
@@ -52,13 +52,14 @@ public partial class Chunk : StaticBody3D
 		if (ChunkManager.Instance._oldChunk.TryGetValue(position, out var bloky))
 		{
 			_blocks = bloky;
-            GD.Print($"Loaded chunk at {ChunkPosition.ToString()}");
+            GD.Print($"Loaded chunk at X: {ChunkPosition.X} Z: {ChunkPosition.Y}");
 		}
 		else
 		{
 			Generate();
 		}
 
+        oldBlock = _blocks;
 		ChunkManager.Instance._oldChunk[oldPos] = oldBlock;
 		
 		Update();
@@ -103,7 +104,7 @@ public partial class Chunk : StaticBody3D
 			}
 		}
         
-        GD.Print($"Generated chunk at {ChunkPosition.ToString()}");
+        GD.Print($"Generated chunk at X: {ChunkPosition.X} Z: {ChunkPosition.Y}");
 	}
 
 	public void Update()
