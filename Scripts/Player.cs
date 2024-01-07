@@ -42,7 +42,7 @@ public partial class Player : CharacterBody3D
 		}
 
 		if (RayCast.IsColliding() && RayCast.GetCollider() is Chunk chunk)
-        {
+		{
 			BlockHighlight.Visible = true;
 
 			var blockPosition = RayCast.GetCollisionPoint() - 0.5f * RayCast.GetCollisionNormal();
