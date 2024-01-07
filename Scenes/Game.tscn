@@ -1,8 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://46fhtqeknqr2"]
+[gd_scene load_steps=16 format=3 uid="uid://46fhtqeknqr2"]
 
 [ext_resource type="Script" path="res://Scripts/BlockManager.cs" id="1_cy3ni"]
 [ext_resource type="Script" path="res://Scripts/ChunkManager.cs" id="1_hnrhe"]
-[ext_resource type="PackedScene" uid="uid://0sb7i7mt0mhg" path="res://Scenes/Chunk.tscn" id="2_43sdr"]
 [ext_resource type="Script" path="res://Scripts/Block.cs" id="2_nvw7f"]
 [ext_resource type="Texture2D" uid="uid://mhevrplxx67m" path="res://Textures/Blocks/cobblestone.png" id="3_1datj"]
 [ext_resource type="Texture2D" uid="uid://dv2vqt004w2hp" path="res://Textures/Blocks/dirt.png" id="4_bryex"]
@@ -48,8 +47,6 @@ Grass = SubResource("Resource_ekowv")
 
 [node name="ChunkManager" type="Node" parent="."]
 script = ExtResource("1_hnrhe")
-ChunkScene = ExtResource("2_43sdr")
-
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_6spgl")
