@@ -32,6 +32,7 @@ public partial class BlockManager : Node
 		Instance = this;
 		
 		//This makes a new grid that we will use to put sum textures on our blocks!
+        // ^ this shi pasted 100%
 		var blockTextures = new Block[] { Air, Stone, Dirt, Grass }.SelectMany(block => block.Textures).Where(texture => texture != null).Distinct().ToArray();
 
 		for (int i = 0; i < blockTextures.Length; i++)
@@ -71,7 +72,7 @@ public partial class BlockManager : Node
 
 		TextureAtlasSize = new Vector2(_gridWidth, _gridHeight);
 		
-		GD.Print("Works!"); //adame nebud rasista
+		GD.Print("BlockManager: Textures Loaded"); //adame nebud rasista
 	}
 
 	public Vector2I GetTextureAtlasPosition(Texture2D texture)

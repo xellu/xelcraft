@@ -33,7 +33,6 @@ public partial class Player : CharacterBody3D
 	public override void _Ready()
 	{
 		Instance = this;
-		Input.MouseMode = Input.MouseModeEnum.Captured; 
 	}
 
 	public override void _Process(double delta)
@@ -50,16 +49,20 @@ public partial class Player : CharacterBody3D
 			BlockHighlight.GlobalPosition = intBlockPosition + new Vector3(0.5f, 0.5f, 0.5f);
 			BlockHighlight.Rotation =  -this.Rotation;
 
-			if (Input.IsActionJustPressed("interact"))
-			{
-				ChunkManager.Instance.SetBlock((Vector3I)(intBlockPosition), BlockManager.Instance.Air);
-			}
+            if (Input.MouseMode == Input.MouseModeEnum.Captured) { //disable interacting if in a container
+                if (Input.IsActionJustPressed("destroy"))
+                {
+                    ChunkManager.Instance.SetBlock((Vector3I)(intBlockPosition), BlockManager.Instance.Air);
+                }
 
-			if (Input.IsActionJustPressed("place"))
-			{
-				ChunkManager.Instance.SetBlock((Vector3I)(intBlockPosition + RayCast.GetCollisionNormal()), BlockManager.Instance.Stone);
+                if (Input.IsActionJustPressed("interact"))
+                {
+                    var item = Hotbar.instance.GetActiveItem();
+                    if (item == null) return;
+                    ChunkManager.Instance.SetBlock((Vector3I)(intBlockPosition + RayCast.GetCollisionNormal()), (Block)item.ItemInstance);
 
-			}
+                }
+            }
 		}
 		else
 		{
@@ -73,19 +76,6 @@ public partial class Player : CharacterBody3D
 		if (this.Position.Y < -10) {
 			this.Position = new Vector3(0, 100, 0);
 		}
-
-		// exit to menu
-		if (Input.IsActionJustPressed("ui_cancel")) {
-			if (Input.MouseMode == Input.MouseModeEnum.Captured) {
-				Input.MouseMode = Input.MouseModeEnum.Visible;
-				return;
-			}
-			
-			Input.MouseMode = Input.MouseModeEnum.Captured;
-		}
-
-		//exit if in menu
-		if (Input.MouseMode != Input.MouseModeEnum.Captured) {return;} 
 		
 		// process movements
 		
@@ -95,42 +85,44 @@ public partial class Player : CharacterBody3D
 		if (!IsOnFloor())
 			velocity.Y -= gravity * (float)delta;
 
-		// Handle Jump.
-		if (Input.IsActionJustPressed("move_jump") && IsOnFloor())
-			velocity.Y = JumpVelocity;
+        // Handle Jump.
+        if (Input.IsActionJustPressed("move_jump") && IsOnFloor())
+            velocity.Y = JumpVelocity;
 
 
-		// Get the input direction and handle the movement/deceleration.
-		// As good practice, you should replace UI actions with custom gameplay actions.
-		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
-		_direction = _direction.Lerp((Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized(), 0.5f);
-		
-		if (_direction != Vector3.Zero)
-		{
-			velocity.X = _direction.X * Speed;
-			velocity.Z = _direction.Z * Speed;
-		}
-		else
-		{
-			velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
-			velocity.Z = Mathf.MoveToward(Velocity.Z, 0, Speed);
-		}
+        // Get the input direction and handle the movement/deceleration.
+        // As good practice, you should replace UI actions with custom gameplay actions.
+        Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
+        _direction = _direction.Lerp((Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized(), 0.5f);
+        
+        if (_direction != Vector3.Zero)
+        {
+            velocity.X = _direction.X * Speed;
+            velocity.Z = _direction.Z * Speed;
+        }
+        else
+        {
+            velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
+            velocity.Z = Mathf.MoveToward(Velocity.Z, 0, Speed);
+        }
 
-		// Handle sprint.
-		if (Input.IsActionPressed("move_sprint") && !Input.IsActionPressed("sneak"))
-		{
-			velocity.X *= SprintFactor;
-			velocity.Z *= SprintFactor;
-		}
+        // Handle sprint.
+        if (Input.IsActionPressed("move_sprint") && !Input.IsActionPressed("sneak"))
+        {
+            velocity.X *= SprintFactor;
+            velocity.Z *= SprintFactor;
+        }
 
-		if (Input.IsActionPressed("sneak"))
-		{
-			velocity.X /= SprintFactor;
-			velocity.Z /= SprintFactor;
-			Scale = new Vector3(1, 0.5f, 1);
-		} else {
-			Scale = new Vector3(1, 1, 1);
-		}
+        if (Input.IsActionPressed("sneak"))
+        {
+            velocity.X /= SprintFactor;
+            velocity.Z /= SprintFactor;
+            Scale = new Vector3(1, 0.5f, 1);
+        } else {
+            Scale = new Vector3(1, 1, 1);
+        }
+
+    
 
 		Velocity = velocity;        
 		MoveAndSlide();
