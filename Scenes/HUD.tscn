@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://pvqd5un238mh"]
+[gd_scene load_steps=7 format=3 uid="uid://pvqd5un238mh"]
 
 [ext_resource type="Script" path="res://Scripts/Interface/InterfaceManager.cs" id="1_7dimi"]
 [ext_resource type="Texture2D" uid="uid://04w8oq7hsgbu" path="res://Textures/Interface/hotbar.png" id="1_a7pwj"]
@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://cfdi5jw34kp50" path="res://Textures/Interface/hotbar_selected.png" id="2_ffqsw"]
 [ext_resource type="Script" path="res://Scripts/Interface/Hotbar.cs" id="2_vhku2"]
 [ext_resource type="Script" path="res://Scripts/Interface/Inventory.cs" id="4_765us"]
-[ext_resource type="Script" path="res://Scripts/Interface/ItemSelector.cs" id="7_g5h78"]
 
 [node name="Interface" type="Control"]
 layout_mode = 3
@@ -139,6 +138,5 @@ offset_bottom = 245.0
 grow_vertical = 2
 focus_mode = 0
 allow_search = false
-script = ExtResource("7_g5h78")
 
 [connection signal="item_clicked" from="Inventory/ItemList" to="." method="_on_item_list_item_clicked"]

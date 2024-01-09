@@ -28,7 +28,7 @@ public partial class Hotbar : Control
         }
 
         ActiveSlot.Position = new Vector2(slotPositions[_activeSlot], ActiveSlot.Position.Y);
-        for (int i = 0; i < _slotAmount; i++) {
+        for (int i = 0; i < _slotAmount+1; i++) {
             var node = GetNode<TextureRect>("Slot" + i);
             if (_items.ContainsKey(i)) {
                 node.Texture = _items[i].Texture2;
@@ -54,6 +54,14 @@ public partial class Hotbar : Control
             } else {
                 _activeSlot++;
             }
+        }
+    }
+
+    public InventoryItem GetActiveItem() {
+        try {
+            return _items[_activeSlot];
+        } catch (KeyNotFoundException) {
+            return null;
         }
     }
 

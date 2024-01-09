@@ -57,7 +57,9 @@ public partial class Player : CharacterBody3D
 
                 if (Input.IsActionJustPressed("interact"))
                 {
-                    ChunkManager.Instance.SetBlock((Vector3I)(intBlockPosition + RayCast.GetCollisionNormal()), BlockManager.Instance.Stone);
+                    var item = Hotbar.instance.GetActiveItem();
+                    if (item == null) return;
+                    ChunkManager.Instance.SetBlock((Vector3I)(intBlockPosition + RayCast.GetCollisionNormal()), (Block)item.ItemInstance);
 
                 }
             }

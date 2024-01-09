@@ -46,5 +46,10 @@ public partial class InterfaceManager : Control  {
         int slot = Hotbar.instance._activeSlot;
         var item = Inventory.instance._inventoryItems[index];
         Hotbar.instance.SetSlot(slot, item); 
+
+        Inventory.instance.IsOpen = false;
+        SetContainer(false);
+        
+        GD.Print("InterfaceManager: Set Hotbar._activeSlot " + slot + " to " + item.Name);
     }
 }
