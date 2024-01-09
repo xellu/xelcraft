@@ -42,14 +42,12 @@ public partial class InterfaceManager : Control  {
         return ContainerOpen;
     }
 
-    public void _on_item_list_item_clicked(int index, Vector2 at_position, int mouse_button_index) {
+    //handle item selection for hotbar
+    public void _on_item_list_item_selected(int index) {
         int slot = Hotbar.instance._activeSlot;
         var item = Inventory.instance._inventoryItems[index];
         Hotbar.instance.SetSlot(slot, item); 
 
-        Inventory.instance.IsOpen = false;
-        SetContainer(false);
-        
         GD.Print("InterfaceManager: Set Hotbar._activeSlot " + slot + " to " + item.Name);
     }
-}
+}   

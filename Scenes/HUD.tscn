@@ -140,3 +140,4 @@ focus_mode = 0
 allow_search = false
 
 [connection signal="item_clicked" from="Inventory/ItemList" to="." method="_on_item_list_item_clicked"]
+[connection signal="item_selected" from="Inventory/ItemList" to="." method="_on_item_list_item_selected"]
