@@ -36,11 +36,15 @@ public partial class InterfaceManager : Control  {
         CloseContainer();
     }
 
-    
-
     //getters
 
     public bool IsContainerOpen() {
         return ContainerOpen;
+    }
+
+    public void _on_item_list_item_clicked(int index, Vector2 at_position, int mouse_button_index) {
+        int slot = Hotbar.instance._activeSlot;
+        var item = Inventory.instance._inventoryItems[index];
+        Hotbar.instance.SetSlot(slot, item); 
     }
 }

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 
 public partial class Inventory : Control
 {
@@ -7,16 +8,14 @@ public partial class Inventory : Control
     public bool Loaded = false;
     private ItemList _itemList;
 
-    public InventoryItem[] _inventoryItems = {
-        new InventoryItem("Grass Block", BlockManager.Instance.Grass, "res://Textures/Blocks/grass_block_side.png", "grass_block"),
-        new InventoryItem("Dirt", BlockManager.Instance.Dirt, "res://Textures/Blocks/dirt.png"),
-        new InventoryItem("Cobblestone", BlockManager.Instance.Stone, "res://Textures/Blocks/cobblestone.png")
-        
-    };
+    public InventoryItem[] _inventoryItems = {};
 
+
+    public static Inventory instance;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+        instance = this;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -26,6 +25,11 @@ public partial class Inventory : Control
 
         if (!Loaded) {
             //load inventory items
+            _inventoryItems = (InventoryItem[])_inventoryItems.Append<InventoryItem>(new InventoryItem("Grass Block", BlockManager.Instance.Grass, "res://Textures/Blocks/grass_block_side.png", "grass_block")).ToArray();
+            _inventoryItems = (InventoryItem[])_inventoryItems.Append<InventoryItem>(new InventoryItem("Dirt", BlockManager.Instance.Dirt, "res://Textures/Blocks/dirt.png")).ToArray();
+            _inventoryItems = (InventoryItem[])_inventoryItems.Append<InventoryItem>(new InventoryItem("Cobblestone", BlockManager.Instance.Stone, "res://Textures/Blocks/cobblestone.png")).ToArray();        
+
+            //load inventory list
             _itemList = GetNode<ItemList>("ItemList");
             _itemList.Clear();
             foreach (InventoryItem item in _inventoryItems) {
