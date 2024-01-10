@@ -18,6 +18,8 @@ public partial class Player : CharacterBody3D
 	// player movement
 	public const float JumpVelocity = 4.5f;
 
+	public bool _flying = false;
+
 	public static Player Instance { get; private set; }
 	
 	[Export] public RayCast3D RayCast;
@@ -69,6 +71,9 @@ public partial class Player : CharacterBody3D
 
 	public override void _PhysicsProcess(double delta)
 	{
+		if (_flying)
+			Velocity = new Vector3();
+		
 		//tp to spawn
 		if (this.Position.Y < -10) {
 			this.Position = new Vector3(0, 100, 0);
@@ -92,13 +97,15 @@ public partial class Player : CharacterBody3D
 		Vector3 velocity = Velocity;
 
 		// Add the gravity.
-		if (!IsOnFloor())
+		if (!IsOnFloor() && !_flying)
 			velocity.Y -= gravity * (float)delta;
 
 		// Handle Jump.
-		if (Input.IsActionJustPressed("move_jump") && IsOnFloor())
+		if (Input.IsActionJustPressed("move_jump") && IsOnFloor() && !_flying)
 			velocity.Y = JumpVelocity;
 
+		if (Input.IsActionPressed("move_jump") && _flying)
+			velocity.Y = 10;
 
 		// Get the input direction and handle the movement/deceleration.
 		// As good practice, you should replace UI actions with custom gameplay actions.
@@ -156,6 +163,12 @@ public partial class Player : CharacterBody3D
 		//reset
 		if (@event.IsActionPressed("ui_filedialog_refresh")) {
 			this.Position = new Vector3(0, 100, 0);
+		}
+
+		if (@event.IsActionPressed("move_fly"))
+		{
+			this._flying = !_flying;
+			this.Velocity = new Vector3();
 		}
 	}
 }

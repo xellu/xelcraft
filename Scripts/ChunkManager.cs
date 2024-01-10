@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using GameTest.Scripts;
 
 public partial class ChunkManager : Node
 {
@@ -18,7 +19,7 @@ public partial class ChunkManager : Node
 
 	[Export] public PackedScene ChunkScene;
 
-	private int _width = 10;
+	private int _width = 5;
 
 	private Vector3 _playerPosition;
 	private object _playerPositionLock = new();
@@ -29,6 +30,8 @@ public partial class ChunkManager : Node
 
 		_chunks = GetParent().GetChildren().OfType<Chunk>().ToList();
 
+		PreGenerateWorld();
+		
 		for (int i = _chunks.Count; i < _width * _width; i++)
 		{
 			var chunk = ChunkScene.Instantiate<Chunk>();
@@ -49,9 +52,24 @@ public partial class ChunkManager : Node
 
 		if (!Engine.IsEditorHint())
 		{
-			new Thread(new ThreadStart(ThreadProcess)).Start();
+			new Thread(ThreadProcess).Start();
 		}
 		
+	}
+
+	private void PreGenerateWorld()
+	{
+		Chunk chunk = ChunkScene.Instantiate<Chunk>();;
+		int radius = 20;
+		
+		for (int x = -radius; x < radius; x++)
+		{
+			for (int y = -radius; y < radius;y++)
+			{
+				var chunkPos = new Vector2I(x, y);
+				_oldChunk[chunkPos] = Generator.Generate(chunk.Noise, chunkPos);
+			}
+		}
 	}
 
 	public void UpdateChunkPosition(Chunk chunk, Vector2I currentPosition, Vector2I previousPosition)
@@ -79,6 +97,97 @@ public partial class ChunkManager : Node
 		}
 	}
 
+	/*private void NotThreadProcess()
+	{
+		int playerChunkX, playerChunkZ;
+		lock (_playerPositionLock)
+		{
+			playerChunkX = Mathf.FloorToInt(_playerPosition.X / Chunk.dimensions.X);
+			playerChunkZ = Mathf.FloorToInt(_playerPosition.Z / Chunk.dimensions.Z);
+		}
+		
+		foreach (var chunk in _chunks)
+		{
+			var chunkPosition = _chunkToPosition[chunk];
+			var chunkX = chunkPosition.X;
+			var chunkZ = chunkPosition.Y;
+			var halfWidth = _width / 2f;
+			var playerChunkXAdjusted = playerChunkX - halfWidth;
+			var playerChunkZAdjusted = playerChunkZ - halfWidth;
+			
+			var newChunkX = (int)(Mathf.PosMod(chunkX - playerChunkX + halfWidth, _width) + playerChunkXAdjusted);
+			var newChunkZ = (int)(Mathf.PosMod(chunkZ - playerChunkZ + halfWidth, _width) + playerChunkZAdjusted);
+			
+			var newPosition = new Vector2I(newChunkX, newChunkZ);
+
+			var newChunkX = (int)(Mathf.PosMod(chunkX - playerChunkX + _width / 2f, _width) + playerChunkX -
+								  _width / 2f);
+			var newChunkZ = (int)(Mathf.PosMod(chunkZ - playerChunkZ + _width / 2f, _width) + playerChunkZ -
+								  _width / 2f);
+			if (newChunkX != chunkX || newChunkZ != chunkZ)
+			{
+				lock (_positionToChunk)
+				{
+					if (_positionToChunk.ContainsKey(chunkPosition))
+					{
+						_positionToChunk.Remove(chunkPosition);
+
+						//GD.Print($"Unloading chunk at {newChunkX} {newChunkZ}");
+					}
+
+					//_chunkToPosition[chunk] = newPosition;
+					//_positionToChunk[newPosition] = chunk;
+
+					chunk.CallDeferred(nameof(Chunk.SetChunkPosition), newPosition);
+					//chunk.SetChunkPosition(newPosition);
+				}
+			}
+		} 
+	}*/
+	
+	/*private void ProcessChunk(Chunk chunk)
+	{
+		while (IsInstanceValid(this))
+		{
+			int playerChunkX, playerChunkZ;
+			lock (_playerPositionLock)
+			{
+				playerChunkX = Mathf.FloorToInt(_playerPosition.X / Chunk.dimensions.X);
+				playerChunkZ = Mathf.FloorToInt(_playerPosition.Z / Chunk.dimensions.Z);
+			}
+			
+			var chunkPosition = _chunkToPosition[chunk];
+			var chunkX = chunkPosition.X;
+			var chunkZ = chunkPosition.Y;
+			var newChunkX = (int)(Mathf.PosMod(chunkX - playerChunkX + _width / 2f, _width) + playerChunkX -
+								  _width / 2f);
+			var newChunkZ = (int)(Mathf.PosMod(chunkZ - playerChunkZ + _width / 2f, _width) + playerChunkZ -
+								  _width / 2f);
+
+			if (newChunkX != chunkX || newChunkZ != chunkZ)
+			{
+				lock (_positionToChunk)
+				{
+					if (_positionToChunk.ContainsKey(chunkPosition))
+					{
+						_positionToChunk.Remove(chunkPosition);
+
+						//GD.Print($"Unloading chunk at {newChunkX} {newChunkZ}");
+					}
+
+					var newPosition = new Vector2I(newChunkX, newChunkZ);
+					_chunkToPosition[chunk] = newPosition;
+					_positionToChunk[newPosition] = chunk;
+
+					chunk.CallDeferred(nameof(Chunk.SetChunkPosition), newPosition);
+				}
+				Thread.Sleep(30);
+			}
+
+			Thread.Sleep(1);
+		}
+	}*/
+	
 	private void ThreadProcess()
 	{
 		while (IsInstanceValid(this))
@@ -89,19 +198,25 @@ public partial class ChunkManager : Node
 				playerChunkX = Mathf.FloorToInt(_playerPosition.X / Chunk.dimensions.X);
 				playerChunkZ = Mathf.FloorToInt(_playerPosition.Z / Chunk.dimensions.Z);
 			}
-
+			
 			foreach (var chunk in _chunks)
 			{
 				var chunkPosition = _chunkToPosition[chunk];
-
 				var chunkX = chunkPosition.X;
 				var chunkZ = chunkPosition.Y;
+				var halfWidth = _width / 2f;
+				var playerChunkXAdjusted = playerChunkX - halfWidth;
+				var playerChunkZAdjusted = playerChunkZ - halfWidth;
+				
+				var newChunkX = (int)(Mathf.PosMod(chunkX - playerChunkX + halfWidth, _width) + playerChunkXAdjusted);
+				var newChunkZ = (int)(Mathf.PosMod(chunkZ - playerChunkZ + halfWidth, _width) + playerChunkZAdjusted);
+				
+				var newPosition = new Vector2I(newChunkX, newChunkZ);
 
-				var newChunkX = (int)(Mathf.PosMod(chunkX - playerChunkX + _width / 2f, _width) + playerChunkX -
+				/*var newChunkX = (int)(Mathf.PosMod(chunkX - playerChunkX + _width / 2f, _width) + playerChunkX -
 									  _width / 2f);
 				var newChunkZ = (int)(Mathf.PosMod(chunkZ - playerChunkZ + _width / 2f, _width) + playerChunkZ -
-									  _width / 2f);
-
+									  _width / 2f);*/
 				if (newChunkX != chunkX || newChunkZ != chunkZ)
 				{
 					lock (_positionToChunk)
@@ -110,20 +225,19 @@ public partial class ChunkManager : Node
 						{
 							_positionToChunk.Remove(chunkPosition);
 
-							GD.Print($"Unloading chunk at {newChunkX} {newChunkZ}");
+							//GD.Print($"Unloading chunk at {newChunkX} {newChunkZ}");
 						}
 
-						var newPosition = new Vector2I(newChunkX, newChunkZ);
-						_chunkToPosition[chunk] = newPosition;
-						_positionToChunk[newPosition] = chunk;
+						//_chunkToPosition[chunk] = newPosition;
+						//_positionToChunk[newPosition] = chunk;
 
 						chunk.CallDeferred(nameof(Chunk.SetChunkPosition), newPosition);
+						//chunk.SetChunkPosition(newPosition);
+						Thread.Sleep(100);
 					}
-					Thread.Sleep(100);
 				}
 			}
 			Thread.Sleep(1);
-
 		}
 	}
 	
@@ -136,6 +250,7 @@ public partial class ChunkManager : Node
 			{
 				_playerPosition = Player.Instance.GlobalPosition;
 			}
+			//NotThreadProcess();
 		}
 	}
 }

@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using GameTest.Scripts;
 using Godot;
 
 public partial class Chunk : StaticBody3D
@@ -32,72 +35,30 @@ public partial class Chunk : StaticBody3D
 	private SurfaceTool _surfaceTool = new();
 
 	private Block[,,] _blocks = new Block[dimensions.X, dimensions.Y, dimensions.Z];
-
 	public Vector2I ChunkPosition { get; private set; }
-
 	[Export] public FastNoiseLite Noise { get; set; }
-
-
-	private Block[,,] oldBlock;
-
+	
 	public void SetChunkPosition(Vector2I position)
 	{
-		//var oldPos = ChunkPosition;
 		_blocks = new Block[dimensions.X, dimensions.Y, dimensions.Z];
 		
 		ChunkManager.Instance.UpdateChunkPosition(this, position, ChunkPosition);
 		ChunkPosition = position;  
 		CallDeferred(Node3D.MethodName.SetGlobalPosition,
 			new Vector3(ChunkPosition.X * dimensions.X, 0, ChunkPosition.Y * dimensions.Z));
-		//oldBlock = _blocks;
-		//ChunkManager.Instance._oldChunk[oldPos] = oldBlock;
 		if (ChunkManager.Instance._oldChunk.TryGetValue(position, out var value))
 			_blocks = value;
 		else
 		{
 			Generate();
 		}
-		Update();
+		//CallDeferred(nameof(Update));
+		Task.Run(Update);
 	}
 
 	public void Generate()
 	{
-
-		for (int x = 0; x < dimensions.X; x++)
-		{
-			for (int y = 0; y < dimensions.Y; y++)
-			{
-				for (int z = 0; z < dimensions.Z; z++)
-				{
-					Block block;
-
-					var globalBlockPosition =
-						ChunkPosition * new Vector2I(dimensions.X, dimensions.Z) + new Vector2(x, z);
-					var groundHeight = (int)(dimensions.Y *
-											 ((Noise.GetNoise2D(globalBlockPosition.X, globalBlockPosition.Y) + 1f) /
-											  2f));
-					
-					if (y < groundHeight / 2)
-					{
-						block = BlockManager.Instance.Stone;
-					}
-					else if (y < groundHeight)
-					{
-						block = BlockManager.Instance.Dirt;
-					}
-					else if (y == groundHeight)
-					{
-						block = BlockManager.Instance.Grass;
-					}
-					else
-					{
-						block = BlockManager.Instance.Air;
-					}
-
-					_blocks[x, y, z] = block;
-				}
-			}
-		}
+		_blocks = Generator.Generate(Noise, ChunkPosition);
 
 		ChunkManager.Instance._oldChunk.Remove(ChunkPosition);
 		ChunkManager.Instance._oldChunk[ChunkPosition] = _blocks;
@@ -107,6 +68,7 @@ public partial class Chunk : StaticBody3D
 
 	public void Update()
 	{
+		CallDeferred(Node3D.MethodName.Hide);
 		_surfaceTool.Begin(Mesh.PrimitiveType.Triangles);
 		for (int x = 0; x < dimensions.X; x++)
 		{
@@ -122,9 +84,14 @@ public partial class Chunk : StaticBody3D
 		_surfaceTool.SetMaterial(BlockManager.Instance.ChunkMaterial);
 		var mesh = _surfaceTool.Commit();
 
+		CallDeferred(nameof(UpdateCollisionMesh), mesh);
+	}
+	
+	private void UpdateCollisionMesh(ArrayMesh mesh)
+	{
 		MeshInstance.Mesh = mesh;
 		CollisionShape.Shape = mesh.CreateTrimeshShape();
-
+		Show();
 	}
 
 	private void CreateBlockMesh(Vector3I blockPosition)
@@ -167,34 +134,35 @@ public partial class Chunk : StaticBody3D
 
 	private void CreateFaceMesh(int[] face, Vector3I blockPosition, Texture2D texture)
 	{
-		var texturePosition = BlockManager.Instance.GetTextureAtlasPosition(texture);
-		var textureAtlasSize = BlockManager.Instance.TextureAtlasSize;
+		var blockManager = BlockManager.Instance;
+		var texturePosition = blockManager.GetTextureAtlasPosition(texture);
+		var textureAtlasSize = blockManager.TextureAtlasSize;
 
 		var uvOffset = texturePosition / textureAtlasSize;
 		var uvWidth = 1f / textureAtlasSize.X;
 		var uvHeight = 1f / textureAtlasSize.Y;
 
-		var uvA = uvOffset + new Vector2(0, 0);
+		var blockPositionOffset = blockPosition;
+
+		var uvA = uvOffset + Vector2.Zero;
 		var uvB = uvOffset + new Vector2(0, uvHeight);
 		var uvC = uvOffset + new Vector2(uvWidth, uvHeight);
 		var uvD = uvOffset + new Vector2(uvWidth, 0);
 
-		var a = _vertices[face[0]] + blockPosition;
-		var b = _vertices[face[1]] + blockPosition;
-		var c = _vertices[face[2]] + blockPosition;
-		var d = _vertices[face[3]] + blockPosition;
+		var vertices = _vertices;
+		var a = vertices[face[0]] + blockPositionOffset;
+		var b = vertices[face[1]] + blockPositionOffset;
+		var c = vertices[face[2]] + blockPositionOffset;
+		var d = vertices[face[3]] + blockPositionOffset;
 
 		var uvTriangle1 = new Vector2[] { uvA, uvB, uvC };
 		var uvTriangle2 = new Vector2[] { uvA, uvC, uvD };
 
-		var triangle1 = new Vector3[] { a, b, c };
-		var triangle2 = new Vector3[] { a, c, d };
-
-		var normal = ((Vector3)(c - a)).Cross((Vector3)(b - a)).Normalized();
+		var normal = ((Vector3)(c - a)).Cross((b - a)).Normalized();
 		var normals = new Vector3[] { normal, normal, normal };
-		
-		_surfaceTool.AddTriangleFan(triangle1, uvTriangle1, normals: normals);
-		_surfaceTool.AddTriangleFan(triangle2, uvTriangle2, normals: normals);
+
+		_surfaceTool.AddTriangleFan(new Vector3[] { a, b, c }, uvTriangle1, normals: normals);
+		_surfaceTool.AddTriangleFan(new Vector3[] { a, c, d }, uvTriangle2, normals: normals);
 	}
 
 	private bool CheckTransparent(Vector3I blockPosition)
