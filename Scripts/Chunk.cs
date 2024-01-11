@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GameTest.Scripts;
@@ -40,10 +41,11 @@ public partial class Chunk : StaticBody3D
 	
 	public void SetChunkPosition(Vector2I position)
 	{
-		_blocks = new Block[dimensions.X, dimensions.Y, dimensions.Z];
+		CallThreadSafe(Node3D.MethodName.Hide); //Hide the chunk while we update it
+		_blocks = new Block[dimensions.X, dimensions.Y, dimensions.Z]; //Clear the blocks
 		
-		ChunkManager.Instance.UpdateChunkPosition(this, position, ChunkPosition);
-		ChunkPosition = position;  
+		ChunkManager.Instance.UpdateChunkPosition(this, position, ChunkPosition); //Update the chunk position in the chunk manager
+		ChunkPosition = position; //Set the chunk position
 		CallDeferred(Node3D.MethodName.SetGlobalPosition,
 			new Vector3(ChunkPosition.X * dimensions.X, 0, ChunkPosition.Y * dimensions.Z));
 		if (ChunkManager.Instance._oldChunk.TryGetValue(position, out var value))
@@ -52,8 +54,7 @@ public partial class Chunk : StaticBody3D
 		{
 			Generate();
 		}
-		//CallDeferred(nameof(Update));
-		Task.Run(Update);
+		Task.Run((() => Update(true))); //Update the chunk in a thread
 	}
 
 	public void Generate()
@@ -66,9 +67,15 @@ public partial class Chunk : StaticBody3D
 		GD.Print($"Generated chunk at X: {ChunkPosition.X} Z: {ChunkPosition.Y}");
 	}
 
-	public void Update()
+	public void Update(bool threadSafe = false)
 	{
-		CallDeferred(Node3D.MethodName.Hide);
+		//This is really stupid, but it works
+		if (!threadSafe)
+		{
+			_surfaceTool = new();
+			_surfaceTool.Clear();
+		}
+		
 		_surfaceTool.Begin(Mesh.PrimitiveType.Triangles);
 		for (int x = 0; x < dimensions.X; x++)
 		{
@@ -80,18 +87,49 @@ public partial class Chunk : StaticBody3D
 				}
 			}
 		}
+		BuildMesh(threadSafe);
+	}
 
+	private void BuildMesh(bool threadSafe)
+	{
 		_surfaceTool.SetMaterial(BlockManager.Instance.ChunkMaterial);
 		var mesh = _surfaceTool.Commit();
+		
+		//Count the faces, this is really slowing the game down :(
+		int faces = 0;
+		Godot.Collections.Array a = mesh.SurfaceGetArrays((int) Mesh.ArrayType.Vertex);
+		foreach(Godot.Collections.Array array in a)
+		{
+				faces += array.Count;
+		}
 
-		CallDeferred(nameof(UpdateCollisionMesh), mesh);
+		if(threadSafe) //Calling this from a thread causes a crash
+			CallThreadSafe(nameof(UpdateCollisionMesh), mesh, true, faces);
+		else
+			UpdateCollisionMesh(mesh, faces:faces);
 	}
-	
-	private void UpdateCollisionMesh(ArrayMesh mesh)
+
+	private void UpdateCollisionMesh(Mesh mesh, bool threadSafe = false, int faces = 0)
 	{
+		if (faces % 3 != 0) //How does this even happen??
+		{
+			GD.PrintErr("Updating collision mesh failed, mesh rebuild required");
+			if (threadSafe)
+			{
+				Update();
+				return;
+			}
+
+			Task.Run((() => Update(true)));
+			return;
+		}
+		
+
 		MeshInstance.Mesh = mesh;
 		CollisionShape.Shape = mesh.CreateTrimeshShape();
-		Show();
+
+		if (!Visible)
+			Show();
 	}
 
 	private void CreateBlockMesh(Vector3I blockPosition)
@@ -134,35 +172,39 @@ public partial class Chunk : StaticBody3D
 
 	private void CreateFaceMesh(int[] face, Vector3I blockPosition, Texture2D texture)
 	{
-		var blockManager = BlockManager.Instance;
-		var texturePosition = blockManager.GetTextureAtlasPosition(texture);
-		var textureAtlasSize = blockManager.TextureAtlasSize;
+		var texturePosition = BlockManager.Instance.GetTextureAtlasPosition(texture);
+		var textureAtlasSize = BlockManager.Instance.TextureAtlasSize;
 
 		var uvOffset = texturePosition / textureAtlasSize;
 		var uvWidth = 1f / textureAtlasSize.X;
 		var uvHeight = 1f / textureAtlasSize.Y;
 
-		var blockPositionOffset = blockPosition;
-
-		var uvA = uvOffset + Vector2.Zero;
+		var uvA = uvOffset + new Vector2(0, 0);
 		var uvB = uvOffset + new Vector2(0, uvHeight);
 		var uvC = uvOffset + new Vector2(uvWidth, uvHeight);
 		var uvD = uvOffset + new Vector2(uvWidth, 0);
 
-		var vertices = _vertices;
-		var a = vertices[face[0]] + blockPositionOffset;
-		var b = vertices[face[1]] + blockPositionOffset;
-		var c = vertices[face[2]] + blockPositionOffset;
-		var d = vertices[face[3]] + blockPositionOffset;
+		var a = _vertices[face[0]] + blockPosition;
+		var b = _vertices[face[1]] + blockPosition;
+		var c = _vertices[face[2]] + blockPosition;
+		var d = _vertices[face[3]] + blockPosition;
 
-		var uvTriangle1 = new Vector2[] { uvA, uvB, uvC };
-		var uvTriangle2 = new Vector2[] { uvA, uvC, uvD };
+		var uvTriangle1 = new[] { uvA, uvB, uvC };
+		var uvTriangle2 = new[] { uvA, uvC, uvD };
 
-		var normal = ((Vector3)(c - a)).Cross((b - a)).Normalized();
-		var normals = new Vector3[] { normal, normal, normal };
+		var triangle1 = new Vector3[] { a, b, c };
+		var triangle2 = new Vector3[] { a, c, d };
 
-		_surfaceTool.AddTriangleFan(new Vector3[] { a, b, c }, uvTriangle1, normals: normals);
-		_surfaceTool.AddTriangleFan(new Vector3[] { a, c, d }, uvTriangle2, normals: normals);
+		var normal = ((Vector3)(c - a)).Cross(b - a).Normalized();
+		var normals = new[] { normal, normal, normal };
+
+		AddTriangles(triangle1, uvTriangle1, normals);
+		AddTriangles(triangle2, uvTriangle2, normals);
+	}
+	
+	private void AddTriangles(Vector3[] vertices, Vector2[] uvs, Vector3[] normals)
+	{
+		_surfaceTool.AddTriangleFan(vertices, uvs, normals: normals);
 	}
 
 	private bool CheckTransparent(Vector3I blockPosition)

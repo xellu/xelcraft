@@ -143,6 +143,8 @@ public partial class Player : CharacterBody3D
 		MoveAndSlide();
 	}
 	
+	
+	
 	public override void _Input(InputEvent @event)
 	{
 		//exit if on menu 
@@ -165,6 +167,17 @@ public partial class Player : CharacterBody3D
 			this.Position = new Vector3(0, 100, 0);
 		}
 
+		if (@event.IsActionPressed("dev_plus"))
+		{
+			Speed++;
+		}
+
+		if (@event.IsActionPressed("dev_minus"))
+		{
+			Speed--;
+		}
+		
+		
 		if (@event.IsActionPressed("move_fly"))
 		{
 			this._flying = !_flying;

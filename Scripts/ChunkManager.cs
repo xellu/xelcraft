@@ -212,11 +212,7 @@ public partial class ChunkManager : Node
 				var newChunkZ = (int)(Mathf.PosMod(chunkZ - playerChunkZ + halfWidth, _width) + playerChunkZAdjusted);
 				
 				var newPosition = new Vector2I(newChunkX, newChunkZ);
-
-				/*var newChunkX = (int)(Mathf.PosMod(chunkX - playerChunkX + _width / 2f, _width) + playerChunkX -
-									  _width / 2f);
-				var newChunkZ = (int)(Mathf.PosMod(chunkZ - playerChunkZ + _width / 2f, _width) + playerChunkZ -
-									  _width / 2f);*/
+				
 				if (newChunkX != chunkX || newChunkZ != chunkZ)
 				{
 					lock (_positionToChunk)
@@ -224,16 +220,10 @@ public partial class ChunkManager : Node
 						if (_positionToChunk.ContainsKey(chunkPosition))
 						{
 							_positionToChunk.Remove(chunkPosition);
-
-							//GD.Print($"Unloading chunk at {newChunkX} {newChunkZ}");
 						}
-
-						//_chunkToPosition[chunk] = newPosition;
-						//_positionToChunk[newPosition] = chunk;
-
+						
 						chunk.CallDeferred(nameof(Chunk.SetChunkPosition), newPosition);
-						//chunk.SetChunkPosition(newPosition);
-						Thread.Sleep(100);
+						Thread.Sleep(70);
 					}
 				}
 			}
