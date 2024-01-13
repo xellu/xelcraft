@@ -54,7 +54,7 @@ public partial class Player : CharacterBody3D
 
 			if (Input.IsActionJustPressed("interact"))
 			{
-				ChunkManager.Instance.SetBlock((Vector3I)(intBlockPosition), BlockManager.Instance.Air);
+				ChunkManager.Instance.SetBlock(intBlockPosition, BlockManager.Instance.Air);
 			}
 
 			if (Input.IsActionJustPressed("place"))

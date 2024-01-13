@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -38,7 +39,9 @@ public partial class Chunk : StaticBody3D
 	private Block[,,] _blocks = new Block[dimensions.X, dimensions.Y, dimensions.Z];
 	public Vector2I ChunkPosition { get; private set; }
 	[Export] public FastNoiseLite Noise { get; set; }
-	
+
+	private ConcurrentDictionary<Vector3, Block> _blockQueue = new();
+
 	public void SetChunkPosition(Vector2I position)
 	{
 		CallThreadSafe(Node3D.MethodName.Hide); //Hide the chunk while we update it
@@ -54,7 +57,7 @@ public partial class Chunk : StaticBody3D
 		{
 			Generate();
 		}
-		Task.Run((() => Update(true))); //Update the chunk in a thread
+		Task.Run(() => Update(true)); //Update the chunk in a thread
 	}
 
 	public void Generate()
@@ -77,13 +80,16 @@ public partial class Chunk : StaticBody3D
 		}
 		
 		_surfaceTool.Begin(Mesh.PrimitiveType.Triangles);
-		for (int x = 0; x < dimensions.X; x++)
+		lock (_blocks)
 		{
-			for (int y = 0; y < dimensions.Y; y++)
+			for (int x = 0; x < dimensions.X; x++)
 			{
-				for (int z = 0; z < dimensions.Z; z++)
+				for (int y = 0; y < dimensions.Y; y++)
 				{
-					CreateBlockMesh(new Vector3I(x, y, z));
+					for (int z = 0; z < dimensions.Z; z++)
+					{
+						CreateBlockMesh(new Vector3I(x, y, z));
+					}
 				}
 			}
 		}
@@ -201,6 +207,25 @@ public partial class Chunk : StaticBody3D
 		AddTriangles(triangle1, uvTriangle1, normals);
 		AddTriangles(triangle2, uvTriangle2, normals);
 	}
+
+	public void UpdateBlocks()
+	{
+		if(_blockQueue.Count < 1)
+			return;
+		
+		foreach(Vector3 vec in _blockQueue.Keys)
+		{
+			lock (_blocks)
+			{
+				_blocks[(int)vec.X, (int)vec.Y, (int)vec.Z] = _blockQueue[vec];
+			}
+		}
+
+		_blockQueue.Clear();
+		
+		Task.Run((() => Update(true)));
+		//CallThreadSafe(nameof(Update), true);
+	}
 	
 	private void AddTriangles(Vector3[] vertices, Vector2[] uvs, Vector3[] normals)
 	{
@@ -218,8 +243,8 @@ public partial class Chunk : StaticBody3D
 
 	public void SetBlock(Vector3I blockPosition, Block block)
 	{
-		_blocks[blockPosition.X, blockPosition.Y, blockPosition.Z] = block;
-		Update();
+		_blockQueue[blockPosition] = block;
+		//UpdateBlocks();
 	}
 
 
