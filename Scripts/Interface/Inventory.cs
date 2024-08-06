@@ -28,6 +28,8 @@ public partial class Inventory : Control
             _inventoryItems = (InventoryItem[])_inventoryItems.Append<InventoryItem>(new InventoryItem("Grass Block", BlockManager.Instance.Grass, "res://Textures/Blocks/grass_block_side.png", "grass_block")).ToArray();
             _inventoryItems = (InventoryItem[])_inventoryItems.Append<InventoryItem>(new InventoryItem("Dirt", BlockManager.Instance.Dirt, "res://Textures/Blocks/dirt.png")).ToArray();
             _inventoryItems = (InventoryItem[])_inventoryItems.Append<InventoryItem>(new InventoryItem("Cobblestone", BlockManager.Instance.Stone, "res://Textures/Blocks/cobblestone.png")).ToArray();        
+            _inventoryItems = (InventoryItem[])_inventoryItems.Append<InventoryItem>(new InventoryItem("Wooden Planks", BlockManager.Instance.Wood, "res://Textures/Blocks/planks.png")).ToArray();        
+            
 
             //load inventory list
             _itemList = GetNode<ItemList>("ItemList");

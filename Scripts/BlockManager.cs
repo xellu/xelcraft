@@ -13,9 +13,11 @@ public partial class BlockManager : Node
 	
 	[Export]
 	public Block Dirt { get; set; }
-	
 	[Export]
 	public Block Grass { get; set; }
+	// public Block Wood { get; set; }
+	[Export]
+	public Block Wood { get; set; }
 
 	private readonly Dictionary<Texture2D, Vector2I> _atlasLookup = new();
 
@@ -32,8 +34,8 @@ public partial class BlockManager : Node
 		Instance = this;
 		
 		//This makes a new grid that we will use to put sum textures on our blocks!
-        // ^ this shi pasted 100%
-		var blockTextures = new Block[] { Air, Stone, Dirt, Grass }.SelectMany(block => block.Textures).Where(texture => texture != null).Distinct().ToArray();
+		// ^ this shi pasted 100%
+		var blockTextures = new Block[] { Air, Stone, Dirt, Grass, Wood }.SelectMany(block => block.Textures).Where(texture => texture != null).Distinct().ToArray();
 
 		for (int i = 0; i < blockTextures.Length; i++)
 		{

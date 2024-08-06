@@ -4,7 +4,9 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yhqfi"]
 transparency = 1
-albedo_color = Color(1, 1, 0, 0.666667)
+albedo_color = Color(0.0913151, 0.676419, 1, 0.192157)
+rim = 0.2
+rim_tint = 0.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_s7wvo"]
 material = SubResource("StandardMaterial3D_yhqfi")

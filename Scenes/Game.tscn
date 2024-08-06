@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://46fhtqeknqr2"]
+[gd_scene load_steps=21 format=3 uid="uid://46fhtqeknqr2"]
 
 [ext_resource type="Script" path="res://Scripts/BlockManager.cs" id="1_cy3ni"]
 [ext_resource type="Script" path="res://Scripts/ChunkManager.cs" id="1_hnrhe"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://ugc6vog0nijk" path="res://Textures/Blocks/grass_block_top.png" id="5_rg6ko"]
 [ext_resource type="Texture2D" uid="uid://2pmsd7o3eq37" path="res://Textures/Blocks/grass_block_side.png" id="5_ttjmu"]
 [ext_resource type="PackedScene" uid="uid://c4h6o80nyguwj" path="res://Scenes/Player.tscn" id="8_k8ght"]
+[ext_resource type="Texture2D" uid="uid://bx546cp0bbn2b" path="res://Textures/Blocks/planks.png" id="9_3uco8"]
 [ext_resource type="PackedScene" uid="uid://x45vtu2prrax" path="res://Scenes/DebugHUD.tscn" id="10_12g78"]
 
 [sub_resource type="Resource" id="Resource_swmm1"]
@@ -28,6 +29,10 @@ script = ExtResource("2_nvw7f")
 Texture = ExtResource("5_ttjmu")
 TopTexture = ExtResource("5_rg6ko")
 BottomTexture = ExtResource("4_bryex")
+
+[sub_resource type="Resource" id="Resource_7r6yy"]
+script = ExtResource("2_nvw7f")
+Texture = ExtResource("9_3uco8")
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_x80jx"]
 
@@ -58,6 +63,7 @@ Air = SubResource("Resource_swmm1")
 Stone = SubResource("Resource_2gc86")
 Dirt = SubResource("Resource_0wqxf")
 Grass = SubResource("Resource_ekowv")
+Wood = SubResource("Resource_7r6yy")
 
 [node name="ChunkManager" type="Node" parent="."]
 script = ExtResource("1_hnrhe")
